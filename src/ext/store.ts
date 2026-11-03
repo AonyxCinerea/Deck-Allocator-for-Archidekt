@@ -8,7 +8,7 @@ import { mergeNewestPages, reachedKnown } from "../collection-sync";
 import { getJson } from "./api";
 import { DEFAULT_SETTINGS, type Settings } from "./settings";
 
-const KEY = "deckAllocator.v3"; // v3: collection records carry collector numbers
+const KEY = "deckAllocator.v4"; // v4: collection records carry printing objects (search swap)
 const DECK_SCHEMA = 2; // bump to refetch decks only (v2: slots carry category info)
 const QUICK_CHECK_MIN_GAP_MS = 60 * 1000;
 const QUICK_CHECK_MAX_PAGES = 3;

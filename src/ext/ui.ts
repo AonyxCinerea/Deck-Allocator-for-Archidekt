@@ -44,6 +44,8 @@ td.cname { font-weight: 600; }
 td.decks a { color: #c4b5fd; text-decoration: none; margin-right: 10px; white-space: nowrap; }
 .dot { display: inline-block; width: 9px; height: 9px; border-radius: 50%; }
 .dot.free { background: #22c55e; } .dot.partial { background: #f59e0b; } .dot.used { background: #ef4444; }
+.toast { position: fixed; left: 50%; bottom: 20px; transform: translateX(-50%); z-index: 2147483003; background: #1f1f23; color: #eee;
+  border-left: 4px solid #7c3aed; border-radius: 8px; padding: 10px 14px; font-size: 13px; max-width: 520px; box-shadow: 0 8px 30px rgba(0,0,0,.45); }
 .top { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
 `;
 

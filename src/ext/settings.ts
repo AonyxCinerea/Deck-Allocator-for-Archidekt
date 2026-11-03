@@ -9,6 +9,9 @@ export interface Settings {
   collectionBadges: boolean;
   pickerBadges: boolean;
   pickerReorder: boolean;
+  searchOwnedFirst: boolean;
+  searchUseFreeCopy: boolean;
+  addedToast: boolean;
 }
 
 export const DEFAULT_SETTINGS: Settings = {
@@ -19,6 +22,9 @@ export const DEFAULT_SETTINGS: Settings = {
   collectionBadges: true,
   pickerBadges: true,
   pickerReorder: true,
+  searchOwnedFirst: true,
+  searchUseFreeCopy: true,
+  addedToast: true,
 };
 
 const KEY = "deckAllocator.settings";

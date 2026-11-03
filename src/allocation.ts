@@ -18,6 +18,8 @@ export interface CollectionRecord {
   quantity: number;
   setCode?: string;
   collectorNumber?: string;
+  /** platform printing object (without the oracle part), used to swap search results to this copy */
+  printing?: Record<string, unknown>;
 }
 
 export interface DeckSlot {

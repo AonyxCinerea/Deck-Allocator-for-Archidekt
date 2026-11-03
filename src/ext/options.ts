@@ -2,7 +2,7 @@ import { DEFAULT_SETTINGS, loadSettings, saveSettings, type Settings } from "./s
 import { clearCache, loadCache } from "./store";
 
 const $ = <T extends HTMLElement>(id: string) => document.getElementById(id) as T;
-const BOOLS = ["ignoreBasicLands", "deckPanel", "collectionBadges", "pickerBadges", "pickerReorder"] as const;
+const BOOLS = ["ignoreBasicLands", "deckPanel", "collectionBadges", "pickerBadges", "pickerReorder", "searchOwnedFirst", "searchUseFreeCopy", "addedToast"] as const;
 
 async function main() {
   const s = await loadSettings();

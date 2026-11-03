@@ -1,6 +1,6 @@
 {
   "name": "deck-allocator-for-archidekt",
-  "version": "0.5.0",
+  "version": "0.6.0",
   "description": "Browser extension for Archidekt: which physical copies are in which deck, and switching decks to free copies.",
   "scripts": {
     "build": "node build.mjs",

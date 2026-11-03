@@ -27,7 +27,13 @@ export function finishOf(modifier: string | undefined, foil?: boolean): Finish {
 const isBasicLand = (superTypes: string[] = [], types: string[] = []) =>
   superTypes.includes("Basic") && types.includes("Land");
 
-// --- collection ---------------------------------------------------------------
+// --- collection ---
+
+/** The printing part of a card object (same shape in collection and search responses), minus the heavy oracle data. */
+export function printingSubset(card: any): Record<string, unknown> {
+  const { oracleCard: _o, flavor: _f, globalCategories: _g, ...rest } = card ?? {};
+  return rest;
+}
 
 export function parseCollectionPage(page: { results: any[] }): CollectionRecord[] {
   return page.results.map((r) => ({
@@ -39,6 +45,7 @@ export function parseCollectionPage(page: { results: any[] }): CollectionRecord[
     quantity: r.quantity,
     setCode: r.card.edition?.editioncode,
     collectorNumber: r.card.collectorNumber,
+    printing: printingSubset(r.card),
   }));
 }
 

@@ -6,6 +6,30 @@ import { deckIdFromUrl, renderDeckPanel } from "./deck-panel";
 import { currentSettings, loadSettings, onSettingsChanged, setCurrentSettings } from "./settings";
 import { loadCache, sync, type Cache } from "./store";
 import { el, shadowHost } from "./ui";
+import { showAddedToasts } from "./added-toast";
+import { allocate } from "../allocation";
+import { buildOwnedIndex } from "../search-transform";
+import { decksForAllocation, invalidateDeck } from "./store";
+
+/** Hand the page-context hook what it needs to reorder/swap search results. */
+function sendIndexToPage() {
+  const s = currentSettings();
+  const result = allocate(cache.collection?.records ?? [], decksForAllocation(cache, s), { ignoreBasicLands: s.ignoreBasicLands });
+  window.postMessage(
+    { source: "deck-allocator:ext", type: "index", index: buildOwnedIndex(result), opts: { reorder: s.searchOwnedFirst, swap: s.searchUseFreeCopy } },
+    location.origin,
+  );
+}
+
+window.addEventListener("message", async (e) => {
+  if (e.source !== window || e.data?.source !== "deck-allocator:page" || e.data.type !== "cardsAdded") return;
+  if (!currentSettings().addedToast) return;
+  const { deckId, added } = e.data as { deckId: string; added: { deckRelationId: string }[] };
+  if (!cache.decks[deckId]) return; // not one of the user's decks
+  await invalidateDeck(deckId);
+  await runSync(false);
+  showAddedToasts(cache, deckId, added.map((a) => a.deckRelationId));
+});
 
 let cache: Cache = { decks: {} };
 let status = "";
@@ -50,6 +74,7 @@ function runSync(forceCollection = false) {
   })
     .then((c) => {
       cache = c;
+      sendIndexToPage();
     })
     .catch((e) => {
       status = e instanceof AuthError ? "" : `Error: ${e.message}`;
@@ -66,9 +91,11 @@ async function main() {
   setCurrentSettings(await loadSettings());
   onSettingsChanged((s) => {
     setCurrentSettings(s);
+    sendIndexToPage();
     render();
   });
   cache = await loadCache();
+  sendIndexToPage();
   render(); // show cached state immediately
   runSync();
 

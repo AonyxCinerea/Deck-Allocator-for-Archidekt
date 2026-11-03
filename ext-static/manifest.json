@@ -1,10 +1,11 @@
 {
   "manifest_version": 3,
   "name": "Deck Allocator for Archidekt",
-  "version": "0.5.0",
+  "version": "0.6.0",
   "description": "Shows which of your physical copies are in which deck, and which are still free.",
   "permissions": [
-    "storage"
+    "storage",
+    "unlimitedStorage"
   ],
   "host_permissions": [
     "https://archidekt.com/*"
@@ -26,7 +27,7 @@
       "js": [
         "main-world.js"
       ],
-      "run_at": "document_idle",
+      "run_at": "document_start",
       "world": "MAIN"
     }
   ],
