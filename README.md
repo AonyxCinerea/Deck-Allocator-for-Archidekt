@@ -53,6 +53,6 @@ npm run package   # + zips
 - `src/ext/` – the extension (content script, MAIN-world helper for collection rows, background, options)
 - `src/spike.ts` – standalone console script that prints an allocation report (`npm run spike`)
 
-Releases: bump `version` in `ext-static/manifest.json`, then tag `v<version>`; CI builds and attaches the zips.
+Releases: bump `version` in `ext-static/manifest.json` (and `package.json`) and push to `main`; CI creates the tag and a release with both zips when that version has no release yet.
 
 Not affiliated with Archidekt. Archidekt's API is undocumented, so a site update can break the extension.
