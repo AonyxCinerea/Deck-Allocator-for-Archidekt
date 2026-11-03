@@ -7,21 +7,34 @@ A browser extension for [Archidekt](https://archidekt.com) that connects your **
 
 ## Features
 
-**Deck pages**
+### Deck pages
 
-- A panel shows which cards have their own copy, which conflict with an older deck that already holds that copy, and which point at a printing you don't own while you have a free copy of another one.
-- Click a free printing to switch the card to it, or switch the whole deck at once after a preview.
-- Theorycrafted decks show "if you built this deck now": only copies no built deck uses.
+A panel shows which cards have their own copy, which conflict with an older deck that already holds that copy, and which point at a printing you don't own while you have a free copy of another one. Click a free printing to switch the card to it, or switch the whole deck after a preview. Theorycrafted decks show "if you built this deck now": only copies no built deck uses.
 
-**Card search** (quick add, the deck _Search_ overlay, the site-wide card search; one print or all prints)
+<p>
+  <img src="docs/screenshots/deck-panel.png" alt="Deck panel listing cards whose printing isn't owned, with free copies to switch to" width="49%">
+  <img src="docs/screenshots/switch-preview.png" alt="Preview of switching all cards of a deck to free copies" width="49%">
+</p>
 
-- Cards and printings you own come first, each with a badge: free, which deck holds it, or "other printings: N free".
-- On deck pages, search results are swapped to your free non-foil copy, so adding the card adds _your_ printing.
-- If a card still gets added in a printing you don't own, a notice offers to switch it to your free copy.
+### Card search
 
-**Printing picker**: your printings first, with free copies and the decks holding the rest.
+Quick add, the deck _Search_ overlay and the site-wide card search (one print or all prints): cards and printings you own come first, each with a badge — free copies, which deck holds the rest, or "other printings: N free". On deck pages, search results are swapped to your free non-foil copy, so adding the card adds _your_ printing. If a card still gets added in a printing you don't own, a notice offers to switch it to your free copy.
 
-**Collection page**: badges per row (click for the decks), and an _Allocation view_ of the whole collection, filterable by free / partly used / all in decks and sortable by every column.
+![Card search for Sol Ring: owned printings first, with free / in-deck / other-printings badges](docs/screenshots/search.png)
+
+<img src="docs/screenshots/quick-add.png" alt="Quick add suggestion with a '3 free' badge" width="60%">
+
+### Printing picker
+
+Your printings come first, with free copies and the decks holding the rest.
+
+![Printing picker for Skullclamp: the free copy and the copy in Gobos first](docs/screenshots/picker.png)
+
+### Collection
+
+Badges on every row of the collection page (click one to see the decks), and an _Allocation view_ of the whole collection, filterable by free / partly used / all in decks, searchable and sortable by every column.
+
+![Allocation view filtered to Sol Ring: owned, free and the decks using each printing](docs/screenshots/collection-view.png)
 
 ## Rules
 
