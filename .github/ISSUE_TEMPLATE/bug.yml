@@ -1,0 +1,39 @@
+name: Bug report
+description: Something doesn't work or shows wrong numbers
+labels: [bug]
+body:
+  - type: input
+    id: version
+    attributes:
+      label: Extension version
+      description: chrome://extensions → Deck Allocator for Archidekt
+      placeholder: "0.7.0"
+    validations:
+      required: true
+  - type: dropdown
+    id: where
+    attributes:
+      label: Where
+      options:
+        - Deck panel
+        - Switching printings
+        - Printing picker
+        - Card search / quick add
+        - Collection page / allocation view
+        - Settings
+        - Something else
+    validations:
+      required: true
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened, and what did you expect?
+      description: Card names and deck names help. A screenshot helps more.
+    validations:
+      required: true
+  - type: textarea
+    id: console
+    attributes:
+      label: Console output
+      description: On the Archidekt page press Cmd+Option+J (Windows Ctrl+Shift+J) and paste lines starting with [deck-allocator].
+      render: text

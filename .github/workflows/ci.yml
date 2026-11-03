@@ -4,11 +4,8 @@ on:
     branches: [main]
   pull_request:
 
-permissions:
-  contents: write
-
 jobs:
-  test:
+  check:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -17,18 +14,61 @@ jobs:
           node-version: 22
           cache: npm
       - run: npm ci
+      - run: npm run format:check
       - run: npm run typecheck
       - run: npm test
+      - name: CHANGELOG has an entry for this version
+        run: npm run release-notes > /dev/null
+
+  e2e:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npx playwright install --with-deps chromium
+      - run: npm run e2e
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: e2e-results
+          path: test-results/
+          retention-days: 7
+
+  # A push to main whose package.json version has no release yet creates one, with the CHANGELOG section as notes.
+  # For versions that are already released, the notes are kept in sync with CHANGELOG.md.
+  release:
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    needs: [check, e2e]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
       - run: npm run package
-      # Release when the manifest version has no release yet (bump version in ext-static/manifest.json → push to main)
-      - name: Release new version
-        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+      - name: Create or update release
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          v="v$(node -p "require('./ext-static/manifest.json').version")"
-          if gh release view "$v" >/dev/null 2>&1; then
-            echo "$v already released"
+          v="v$(node -p "require('./package.json').version")"
+          npm run --silent release-notes > notes.md
+          if gh release view "$v" > /dev/null 2>&1; then
+            gh release edit "$v" --notes-file notes.md
           else
-            gh release create "$v" dist/*.zip --target "$GITHUB_SHA" --title "$v" --generate-notes
+            gh release create "$v" dist/*.zip --target "$GITHUB_SHA" --title "$v" --notes-file notes.md
           fi
+          # keep notes of earlier releases in sync with CHANGELOG.md
+          for tag in $(gh release list --limit 100 --json tagName --jq '.[].tagName'); do
+            [ "$tag" = "$v" ] && continue
+            if npm run --silent release-notes -- "${tag#v}" > old.md 2> /dev/null; then
+              gh release edit "$tag" --notes-file old.md
+            fi
+          done
