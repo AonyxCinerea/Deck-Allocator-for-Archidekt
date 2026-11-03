@@ -85,4 +85,4 @@ Editing an older changelog section updates that release's notes on the next push
 
 ---
 
-Not affiliated with Archidekt. Magic: The Gathering is a trademark of Wizards of the Coast.
+[MIT License](LICENSE). Not affiliated with Archidekt. Magic: The Gathering is a trademark of Wizards of the Coast.

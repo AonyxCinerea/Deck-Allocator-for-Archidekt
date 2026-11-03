@@ -2,6 +2,7 @@
   "name": "deck-allocator-for-archidekt",
   "version": "0.7.0",
   "description": "Browser extension for Archidekt: which physical copies are in which deck, and switching decks to free copies.",
+  "license": "MIT",
   "scripts": {
     "build": "node build.mjs",
     "test": "vitest run",
