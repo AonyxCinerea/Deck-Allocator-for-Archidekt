@@ -96,11 +96,7 @@ export interface AllocateOptions {
 
 const key = (printingId: string, finish: Finish) => `${printingId}|${finish}`;
 
-export function allocate(
-  collection: CollectionRecord[],
-  decks: Deck[],
-  opts: AllocateOptions = {},
-): AllocationResult {
+export function allocate(collection: CollectionRecord[], decks: Deck[], opts: AllocateOptions = {}): AllocationResult {
   const ignoreBasics = opts.ignoreBasicLands ?? true;
 
   const records = new Map<string, RecordAllocation>();

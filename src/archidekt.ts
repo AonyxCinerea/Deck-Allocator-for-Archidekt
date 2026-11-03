@@ -24,8 +24,7 @@ export function finishOf(modifier: string | undefined, foil?: boolean): Finish {
   return "nonfoil";
 }
 
-const isBasicLand = (superTypes: string[] = [], types: string[] = []) =>
-  superTypes.includes("Basic") && types.includes("Land");
+const isBasicLand = (superTypes: string[] = [], types: string[] = []) => superTypes.includes("Basic") && types.includes("Land");
 
 // --- collection ---
 
@@ -149,7 +148,9 @@ function patchId() {
  * Whole slot → one "modify" (new cardid/modifier on the same deck entry).
  * Part of a slot → "modify" the old entry down to the remaining quantity + "add" the moved copies as the new printing.
  */
-export function buildSwitchPatch(changes: { ref: ArchidektSlotRef; targetPrintingId: string; targetFinish: Finish; quantity: number }[]) {
+export function buildSwitchPatch(
+  changes: { ref: ArchidektSlotRef; targetPrintingId: string; targetFinish: Finish; quantity: number }[],
+) {
   const cards: any[] = [];
   // several changes may hit the same slot (copies split over printings) → track remaining quantity per entry
   const left = new Map<string, number>();
@@ -190,7 +191,14 @@ export function buildSwitchPatch(changes: { ref: ArchidektSlotRef; targetPrintin
         customCardId: null,
         categories: r.categories,
         patchId: patchId(),
-        modifications: { quantity: qty, modifier: r.modifier, customCmc: r.customCmc, companion: r.companion, flippedDefault: r.flippedDefault, label: r.label },
+        modifications: {
+          quantity: qty,
+          modifier: r.modifier,
+          customCmc: r.customCmc,
+          companion: r.companion,
+          flippedDefault: r.flippedDefault,
+          label: r.label,
+        },
         deckRelationId: rel,
       });
     }

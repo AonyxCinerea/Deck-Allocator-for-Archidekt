@@ -2,7 +2,17 @@ import { DEFAULT_SETTINGS, loadSettings, saveSettings, type Settings } from "./s
 import { clearCache, loadCache } from "./store";
 
 const $ = <T extends HTMLElement>(id: string) => document.getElementById(id) as T;
-const BOOLS = ["ignoreBasicLands", "deckPanel", "collectionBadges", "pickerBadges", "pickerReorder", "searchOwnedFirst", "searchBadges", "searchUseFreeCopy", "addedToast"] as const;
+const BOOLS = [
+  "ignoreBasicLands",
+  "deckPanel",
+  "collectionBadges",
+  "pickerBadges",
+  "pickerReorder",
+  "searchOwnedFirst",
+  "searchBadges",
+  "searchUseFreeCopy",
+  "addedToast",
+] as const;
 
 async function main() {
   const s = await loadSettings();
@@ -30,7 +40,10 @@ async function main() {
   $("save").onclick = async () => {
     const excluded = [
       ...[...cats.querySelectorAll<HTMLInputElement>("input:checked")].map((i) => i.value),
-      ...$<HTMLInputElement>("extraCats").value.split(",").map((x) => x.trim()).filter(Boolean),
+      ...$<HTMLInputElement>("extraCats")
+        .value.split(",")
+        .map((x) => x.trim())
+        .filter(Boolean),
     ];
     const next: Settings = {
       ...s,

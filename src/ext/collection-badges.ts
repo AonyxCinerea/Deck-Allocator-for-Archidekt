@@ -16,7 +16,9 @@ export function collectionUserFromUrl(): string | undefined {
 }
 
 export function prepareBadges(cache: Cache) {
-  result = allocate(cache.collection?.records ?? [], decksForAllocation(cache, currentSettings()), { ignoreBasicLands: currentSettings().ignoreBasicLands });
+  result = allocate(cache.collection?.records ?? [], decksForAllocation(cache, currentSettings()), {
+    ignoreBasicLands: currentSettings().ignoreBasicLands,
+  });
   const groups = new Map<string, RecordAllocation[]>();
   for (const ra of result.records.values()) {
     const k = `${ra.record.printingId}|${ra.record.finish}`;
@@ -40,7 +42,8 @@ export const lookupPrinting = (set?: string, cn?: string) => {
   const k = printingKey(set, cn);
   return k ? byPrinting.get(k) : undefined;
 };
-export const lookupName = (name: string) => byName.get(name.trim().toLowerCase().split(" // ")[0]) ?? byName.get(name.trim().toLowerCase());
+export const lookupName = (name: string) =>
+  byName.get(name.trim().toLowerCase().split(" // ")[0]) ?? byName.get(name.trim().toLowerCase());
 export const badgesReady = () => !!result;
 
 const printingKey = (set?: string, cn?: string) => (set && cn ? `${set.toLowerCase()}|${cn.toLowerCase()}` : undefined);
@@ -115,14 +118,25 @@ export function badgeFor(group: RecordAllocation[], withFinish = false): HTMLEle
   }
   if (claims.size) {
     b.style.cursor = "pointer";
-    b.addEventListener("click", (e) => {
-      e.preventDefault();
-      e.stopPropagation(); // don't open Archidekt's card modal / select the printing
-      showDeckPopover(b, owned, free, [...claims].map(([name, qty]) => ({ name, qty, id: deckIds.get(name)! })));
-    }, true);
+    b.addEventListener(
+      "click",
+      (e) => {
+        e.preventDefault();
+        e.stopPropagation(); // don't open Archidekt's card modal / select the printing
+        showDeckPopover(
+          b,
+          owned,
+          free,
+          [...claims].map(([name, qty]) => ({ name, qty, id: deckIds.get(name)! })),
+        );
+      },
+      true,
+    );
   }
   b.title = claims.size
-    ? `This printing: ${owned} owned, ${free} free\n` + [...claims].map(([d, q]) => `• ${q}× ${d}`).join("\n") + "\n(click for links)"
+    ? `This printing: ${owned} owned, ${free} free\n` +
+      [...claims].map(([d, q]) => `• ${q}× ${d}`).join("\n") +
+      "\n(click for links)"
     : `This printing: ${owned} owned, none in a built deck`;
   return b;
 }
@@ -161,9 +175,17 @@ function showDeckPopover(anchor: HTMLElement, owned: number, free: number, decks
   const r = anchor.getBoundingClientRect();
   const p = document.createElement("div");
   Object.assign(p.style, {
-    position: "fixed", zIndex: "2147483001", left: `${Math.min(r.left, innerWidth - 280)}px`, top: `${r.bottom + 4}px`,
-    width: "260px", background: "#1f1f23", color: "#eee", borderRadius: "8px", padding: "8px 10px",
-    font: "13px Lato, system-ui, sans-serif", boxShadow: "0 8px 30px rgba(0,0,0,.4)",
+    position: "fixed",
+    zIndex: "2147483001",
+    left: `${Math.min(r.left, innerWidth - 280)}px`,
+    top: `${r.bottom + 4}px`,
+    width: "260px",
+    background: "#1f1f23",
+    color: "#eee",
+    borderRadius: "8px",
+    padding: "8px 10px",
+    font: "13px Lato, system-ui, sans-serif",
+    boxShadow: "0 8px 30px rgba(0,0,0,.4)",
   });
   const head = document.createElement("div");
   head.textContent = `${owned} owned · ${free} free`;

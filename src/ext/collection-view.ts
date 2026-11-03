@@ -32,7 +32,9 @@ const state = {
 };
 
 function buildRows(cache: Cache): Row[] {
-  const result = allocate(cache.collection?.records ?? [], decksForAllocation(cache, currentSettings()), { ignoreBasicLands: currentSettings().ignoreBasicLands });
+  const result = allocate(cache.collection?.records ?? [], decksForAllocation(cache, currentSettings()), {
+    ignoreBasicLands: currentSettings().ignoreBasicLands,
+  });
   const groups = new Map<string, RecordAllocation[]>();
   for (const ra of result.records.values()) {
     const k = `${ra.record.printingId}|${ra.record.finish}`;
@@ -51,21 +53,32 @@ function buildRows(cache: Cache): Row[] {
       }
     const status: Status = decks.size === 0 ? "free" : free > 0 ? "partial" : "used";
     return {
-      name: r.name, set: (r.setCode ?? "").toUpperCase(), cn: r.collectorNumber ?? "",
+      name: r.name,
+      set: (r.setCode ?? "").toUpperCase(),
+      cn: r.collectorNumber ?? "",
       finish: r.finish === "nonfoil" ? "" : r.finish === "foil" ? "Foil" : "Etched",
-      owned, free, status, decks: [...decks.values()],
+      owned,
+      free,
+      status,
+      decks: [...decks.values()],
     };
   });
 }
 
 function compare(a: Row, b: Row, key: SortKey): number {
   switch (key) {
-    case "status": return STATUS_RANK[a.status] - STATUS_RANK[b.status] || a.name.localeCompare(b.name);
-    case "name": return a.name.localeCompare(b.name) || a.set.localeCompare(b.set);
-    case "set": return a.set.localeCompare(b.set) || a.cn.localeCompare(b.cn, undefined, { numeric: true });
-    case "owned": return a.owned - b.owned || a.name.localeCompare(b.name);
-    case "free": return a.free - b.free || a.name.localeCompare(b.name);
-    case "decks": return a.decks.length - b.decks.length || a.name.localeCompare(b.name);
+    case "status":
+      return STATUS_RANK[a.status] - STATUS_RANK[b.status] || a.name.localeCompare(b.name);
+    case "name":
+      return a.name.localeCompare(b.name) || a.set.localeCompare(b.set);
+    case "set":
+      return a.set.localeCompare(b.set) || a.cn.localeCompare(b.cn, undefined, { numeric: true });
+    case "owned":
+      return a.owned - b.owned || a.name.localeCompare(b.name);
+    case "free":
+      return a.free - b.free || a.name.localeCompare(b.name);
+    case "decks":
+      return a.decks.length - b.decks.length || a.name.localeCompare(b.name);
   }
 }
 
@@ -83,7 +96,9 @@ export function renderCollectionView(cache: Cache, onRefresh: () => void) {
   const all = buildRows(cache);
   const counts = { free: 0, partial: 0, used: 0 } as Record<Status, number>;
   for (const r of all) counts[r.status]++;
-  const deckNames = [...new Map(all.flatMap((r) => r.decks).map((d) => [d.id, d.name])).entries()].sort((a, b) => a[1].localeCompare(b[1]));
+  const deckNames = [...new Map(all.flatMap((r) => r.decks).map((d) => [d.id, d.name])).entries()].sort((a, b) =>
+    a[1].localeCompare(b[1]),
+  );
 
   const q = state.search.trim().toLowerCase();
   const rows = all
@@ -111,7 +126,12 @@ export function renderCollectionView(cache: Cache, onRefresh: () => void) {
     s.focus();
     s.setSelectionRange(s.value.length, s.value.length);
   };
-  const deckSel = el("select", {}, el("option", { value: "" }, "All decks"), ...deckNames.map(([id, n]) => el("option", { value: id }, n)));
+  const deckSel = el(
+    "select",
+    {},
+    el("option", { value: "" }, "All decks"),
+    ...deckNames.map(([id, n]) => el("option", { value: id }, n)),
+  );
   deckSel.value = state.deck;
   deckSel.onchange = () => ((state.deck = deckSel.value), rerender());
   const refresh = el("button", { class: "small" }, "Reload collection");
@@ -146,7 +166,8 @@ export function renderCollectionView(cache: Cache, onRefresh: () => void) {
       ),
     );
   }
-  const more = rows.length > state.limit ? el("button", { class: "small" }, `Show more (${rows.length - state.limit} left)`) : null;
+  const more =
+    rows.length > state.limit ? el("button", { class: "small" }, `Show more (${rows.length - state.limit} left)`) : null;
   if (more) more.onclick = () => ((state.limit += 500), rerender());
 
   const overlay = el(
@@ -155,13 +176,35 @@ export function renderCollectionView(cache: Cache, onRefresh: () => void) {
     el(
       "div",
       { class: "sheet" },
-      el("div", { class: "top" }, el("h2", {}, "Collection by allocation"), el("span", {}, refresh, " ", gearButton(), " ", close)),
-      el("div", { class: "muted" }, `${all.length} printings · ${rows.length} shown · collection loaded ${cache.collection ? timeAgo(cache.collection.fetchedAt) : "never"} · not counted: theorycrafted decks, ${currentSettings().excludedCategories.join(", ") || "—"}`),
+      el(
+        "div",
+        { class: "top" },
+        el("h2", {}, "Collection by allocation"),
+        el("span", {}, refresh, " ", gearButton(), " ", close),
+      ),
+      el(
+        "div",
+        { class: "muted" },
+        `${all.length} printings · ${rows.length} shown · collection loaded ${cache.collection ? timeAgo(cache.collection.fetchedAt) : "never"} · not counted: theorycrafted decks, ${currentSettings().excludedCategories.join(", ") || "—"}`,
+      ),
       el("div", { class: "controls" }, chips, search, deckSel),
       el(
         "table",
         {},
-        el("thead", {}, el("tr", {}, th("status", ""), th("name", "Card"), th("set", "Printing"), th("owned", "Owned", "num"), th("free", "Free", "num"), th("decks", "In decks"))),
+        el(
+          "thead",
+          {},
+          el(
+            "tr",
+            {},
+            th("status", ""),
+            th("name", "Card"),
+            th("set", "Printing"),
+            th("owned", "Owned", "num"),
+            th("free", "Free", "num"),
+            th("decks", "In decks"),
+          ),
+        ),
         tbody,
       ),
       more,
@@ -176,6 +219,8 @@ export function renderCollectionView(cache: Cache, onRefresh: () => void) {
 document.addEventListener("keydown", (e) => {
   if (e.key === "Escape" && state.open) {
     state.open = false;
-    shadowHost("deck-allocator-view").querySelectorAll(".overlay").forEach((n) => n.remove());
+    shadowHost("deck-allocator-view")
+      .querySelectorAll(".overlay")
+      .forEach((n) => n.remove());
   }
 });

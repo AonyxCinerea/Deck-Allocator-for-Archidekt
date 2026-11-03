@@ -1,3 +1,7 @@
 node_modules/
 dist/
 *.har
+test-results/
+playwright-report/
+notes.md
+old.md

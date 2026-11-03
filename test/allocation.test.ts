@@ -2,12 +2,29 @@ import { describe, expect, it } from "vitest";
 import { allocate, printingsFor, type CollectionRecord, type Deck, type DeckSlot } from "../src/allocation";
 
 const rec = (id: string, printingId: string, quantity: number, finish: "nonfoil" | "foil" = "nonfoil"): CollectionRecord => ({
-  id, name: "Jetmir's Garden", oracleId: "jetmir", printingId, finish, quantity,
+  id,
+  name: "Jetmir's Garden",
+  oracleId: "jetmir",
+  printingId,
+  finish,
+  quantity,
 });
 const slot = (printingId: string, quantity = 1, extra: Partial<DeckSlot> = {}): DeckSlot => ({
-  oracleId: "jetmir", printingId, finish: "nonfoil", quantity, name: "Jetmir's Garden", inDeck: true, ...extra,
+  oracleId: "jetmir",
+  printingId,
+  finish: "nonfoil",
+  quantity,
+  name: "Jetmir's Garden",
+  inDeck: true,
+  ...extra,
 });
-const deck = (id: string, priority: number, slots: DeckSlot[], physical = true): Deck => ({ id, name: id, priority, physical, slots });
+const deck = (id: string, priority: number, slots: DeckSlot[], physical = true): Deck => ({
+  id,
+  name: id,
+  priority,
+  physical,
+  slots,
+});
 
 const statusOf = (r: ReturnType<typeof allocate>, deckId: string) => r.slots.find((s) => s.deckId === deckId)!.status;
 

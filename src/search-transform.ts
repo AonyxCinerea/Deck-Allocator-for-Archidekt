@@ -89,7 +89,10 @@ export function transformCardResults(data: any, kind: SearchKind, index: OwnedIn
       const info = kind === "printings" ? index.byPrinting[String(card?.id)] : index.byOracle[String(card?.oracleCard?.id)];
       return !info ? 2 : info.free > 0 ? 0 : 1;
     };
-    results = results.map((c, i) => [rank(c), i, c] as const).sort((a, b) => a[0] - b[0] || a[1] - b[1]).map((x) => x[2]);
+    results = results
+      .map((c, i) => [rank(c), i, c] as const)
+      .sort((a, b) => a[0] - b[0] || a[1] - b[1])
+      .map((x) => x[2]);
   }
   return { ...data, results };
 }

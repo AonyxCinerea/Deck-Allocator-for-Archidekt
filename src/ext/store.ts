@@ -94,7 +94,14 @@ async function fullCollectionReload(cache: Cache, userId: number, progress: Prog
   await saveCache(cache);
 }
 
-async function syncCollection(cache: Cache, userId: number, force: boolean, settings: Settings, progress: Progress, wait: (s: number) => void) {
+async function syncCollection(
+  cache: Cache,
+  userId: number,
+  force: boolean,
+  settings: Settings,
+  progress: Progress,
+  wait: (s: number) => void,
+) {
   const c = cache.collection;
   const stale = !c || Date.now() - c.fetchedAt > settings.fullReloadHours * 3600 * 1000;
   if (force || stale) return fullCollectionReload(cache, userId, progress, wait);

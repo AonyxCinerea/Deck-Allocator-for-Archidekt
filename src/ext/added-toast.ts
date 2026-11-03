@@ -25,13 +25,25 @@ export function showAddedToasts(cache: Cache, deckId: string, deckRelationIds: s
 
   const root = shadowHost("deck-allocator-toast");
   root.querySelectorAll(".toast").forEach((n) => n.remove());
-  const names = offers.map((o) => `${o.slot.name} → ${o.target.setCode?.toUpperCase()}${o.target.finish === "nonfoil" ? "" : " ✦"}`).join(", ");
-  const yes = el("button", { class: "small primary" }, offers.length > 1 ? `Use my ${offers.length} free copies` : "Use my free copy");
+  const names = offers
+    .map((o) => `${o.slot.name} → ${o.target.setCode?.toUpperCase()}${o.target.finish === "nonfoil" ? "" : " ✦"}`)
+    .join(", ");
+  const yes = el(
+    "button",
+    { class: "small primary" },
+    offers.length > 1 ? `Use my ${offers.length} free copies` : "Use my free copy",
+  );
   const no = el("button", { class: "small" }, "Keep");
   const toast = el(
     "div",
     { class: "toast" },
-    el("div", {}, offers.length > 1 ? "Added in printings you don't own. You have free copies:" : "Added in a printing you don't own. You have a free copy:"),
+    el(
+      "div",
+      {},
+      offers.length > 1
+        ? "Added in printings you don't own. You have free copies:"
+        : "Added in a printing you don't own. You have a free copy:",
+    ),
     el("div", { class: "muted", style: "margin:4px 0 8px" }, names),
     el("div", {}, yes, no),
   );

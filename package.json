@@ -7,11 +7,18 @@
     "test": "vitest run",
     "typecheck": "tsc",
     "package": "node build.mjs && node scripts/package.mjs",
-    "spike": "esbuild src/spike.ts --bundle --format=iife --target=es2020 --outfile=dist/deck-allocator-spike.js"
+    "spike": "esbuild src/spike.ts --bundle --format=iife --target=es2020 --outfile=dist/deck-allocator-spike.js",
+    "e2e": "npm run build && playwright test",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "release-notes": "node scripts/release-notes.mjs"
   },
   "devDependencies": {
+    "@playwright/test": "^1.63.0",
     "@types/chrome": "^0.3.7",
+    "@types/node": "^26.6.6",
     "esbuild": "^0.28.2",
+    "prettier": "^3.9.10",
     "typescript": "^7.0.2",
     "vitest": "^2.1.9"
   },

@@ -1,32 +1,18 @@
 {
   "manifest_version": 3,
   "name": "Deck Allocator for Archidekt",
-  "version": "0.7.0",
   "description": "Shows which of your physical copies are in which deck, and which are still free.",
-  "permissions": [
-    "storage",
-    "unlimitedStorage"
-  ],
-  "host_permissions": [
-    "https://archidekt.com/*"
-  ],
+  "permissions": ["storage", "unlimitedStorage"],
+  "host_permissions": ["https://archidekt.com/*"],
   "content_scripts": [
     {
-      "matches": [
-        "https://archidekt.com/*"
-      ],
-      "js": [
-        "content.js"
-      ],
+      "matches": ["https://archidekt.com/*"],
+      "js": ["content.js"],
       "run_at": "document_idle"
     },
     {
-      "matches": [
-        "https://archidekt.com/*"
-      ],
-      "js": [
-        "main-world.js"
-      ],
+      "matches": ["https://archidekt.com/*"],
+      "js": ["main-world.js"],
       "run_at": "document_start",
       "world": "MAIN"
     }
@@ -40,8 +26,5 @@
   "options_ui": {
     "page": "options.html",
     "open_in_tab": true
-  },
-  "background": {
-    "service_worker": "background.js"
   }
 }

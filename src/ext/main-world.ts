@@ -8,7 +8,14 @@ import { classifySearch, transformCardResults, type OwnedIndex } from "../search
 const ROW_SELECTOR = '[class*="textCollectionCard_cardRow"]';
 
 function looksLikeRecord(o: any): o is { id: number } {
-  return o && typeof o === "object" && typeof o.id === "number" && "quantity" in o && ("condition" in o || "modifier" in o) && "card" in o;
+  return (
+    o &&
+    typeof o === "object" &&
+    typeof o.id === "number" &&
+    "quantity" in o &&
+    ("condition" in o || "modifier" in o) &&
+    "card" in o
+  );
 }
 
 function findRecord(props: any, depth = 0): number | undefined {
@@ -87,8 +94,12 @@ window.fetch = async function (input: RequestInfo | URL, init?: RequestInit) {
         .clone()
         .json()
         .then((body: any) => {
-          const added = (body?.add ?? []).map((a: any) => ({ deckRelationId: String(a.deckRelationId), cardId: String(a.cardId) }));
-          if (added.length) window.postMessage({ source: `${MSG}:page`, type: "cardsAdded", deckId: m[1], added }, location.origin);
+          const added = (body?.add ?? []).map((a: any) => ({
+            deckRelationId: String(a.deckRelationId),
+            cardId: String(a.cardId),
+          }));
+          if (added.length)
+            window.postMessage({ source: `${MSG}:page`, type: "cardsAdded", deckId: m[1], added }, location.origin);
         })
         .catch(() => {});
     }

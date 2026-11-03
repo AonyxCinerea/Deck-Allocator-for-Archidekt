@@ -39,7 +39,10 @@ async function throttledFetch(url: string, auth?: string): Promise<Response> {
     const wait = lastRequest + MIN_GAP_MS - Date.now();
     if (wait > 0) await sleep(wait);
     lastRequest = Date.now();
-    const res = await fetch(url, { credentials: "include", headers: { accept: "application/json", ...(auth ? { authorization: auth } : {}) } });
+    const res = await fetch(url, {
+      credentials: "include",
+      headers: { accept: "application/json", ...(auth ? { authorization: auth } : {}) },
+    });
     if (res.status !== 429 || attempt >= 5) return res;
     const retryAfter = Number(res.headers.get("retry-after")) * 1000 || 2000 * 2 ** attempt;
     log(`rate limited, waiting ${Math.round(retryAfter / 1000)}s…`);
@@ -124,14 +127,16 @@ async function run() {
       deck: decks.find((d) => d.id === s.deckId)!.name,
       card: s.slot.name,
       missing: s.status.kind === "conflict" ? s.status.missing : 0,
-      freeAlternatives: s.status.kind === "conflict" ? s.status.alternatives.map((a) => `${a.record.setCode} ×${a.free}`).join(", ") : "",
+      freeAlternatives:
+        s.status.kind === "conflict" ? s.status.alternatives.map((a) => `${a.record.setCode} ×${a.free}`).join(", ") : "",
     }));
   const swappable = result.slots
     .filter((s) => s.status.kind === "swappable")
     .map((s) => ({
       deck: decks.find((d) => d.id === s.deckId)!.name,
       card: s.slot.name,
-      freeOwned: s.status.kind === "swappable" ? s.status.alternatives.map((a) => `${a.record.setCode} ×${a.free}`).join(", ") : "",
+      freeOwned:
+        s.status.kind === "swappable" ? s.status.alternatives.map((a) => `${a.record.setCode} ×${a.free}`).join(", ") : "",
     }));
   const missing = result.slots.filter((s) => s.status.kind === "missing").length;
   const owned = result.slots.filter((s) => s.status.kind === "owned").length;
@@ -139,7 +144,9 @@ async function run() {
   const freeCopies = [...result.records.values()].reduce((n, r) => n + Math.max(r.free, 0), 0);
 
   log(`collection: ${collection.length} records / ${totalCopies} copies, ${freeCopies} free (not in any deck)`);
-  log(`deck slots: ${owned} owned exactly, ${conflicts.length} conflicts, ${swappable.length} could use a free owned printing, ${missing} not owned`);
+  log(
+    `deck slots: ${owned} owned exactly, ${conflicts.length} conflicts, ${swappable.length} could use a free owned printing, ${missing} not owned`,
+  );
   log("Conflicts (exact printing already used by an older deck):");
   console.table(conflicts);
   log("Swappable (deck uses an unowned printing, but you own a free copy of another):");
@@ -147,7 +154,22 @@ async function run() {
 
   (window as any).deckAllocator = { collection, decks, result, conflicts, swappable };
   probe.auth = authInfo;
-  const report = { summary: { decks: decks.length, failedDecks: failedDecks.length, records: collection.length, totalCopies, freeCopies, owned, missing, conflicts: conflicts.length, swappable: swappable.length }, probe, conflicts, swappable };
+  const report = {
+    summary: {
+      decks: decks.length,
+      failedDecks: failedDecks.length,
+      records: collection.length,
+      totalCopies,
+      freeCopies,
+      owned,
+      missing,
+      conflicts: conflicts.length,
+      swappable: swappable.length,
+    },
+    probe,
+    conflicts,
+    swappable,
+  };
   const a = document.createElement("a");
   a.href = URL.createObjectURL(new Blob([JSON.stringify(report, null, 1)], { type: "application/json" }));
   a.download = "deck-allocator-report.json";

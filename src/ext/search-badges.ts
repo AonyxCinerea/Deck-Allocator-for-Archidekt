@@ -22,8 +22,14 @@ function otherPrintingsBadge(all: RecordAllocation[], exclude?: RecordAllocation
   const b = document.createElement("span");
   b.className = BADGE_CLASS;
   Object.assign(b.style, {
-    marginLeft: "6px", padding: "0 5px", borderRadius: "4px", fontSize: "11px", fontWeight: "700",
-    background: free ? "#1e3a8a" : "#3f3f46", color: "#fff", whiteSpace: "nowrap",
+    marginLeft: "6px",
+    padding: "0 5px",
+    borderRadius: "4px",
+    fontSize: "11px",
+    fontWeight: "700",
+    background: free ? "#1e3a8a" : "#3f3f46",
+    color: "#fff",
+    whiteSpace: "nowrap",
   });
   b.textContent = free ? `other printings: ${free} free` : `other printings: ${owned}, all in decks`;
   const sets = new Map<string, number>();
@@ -32,7 +38,9 @@ function otherPrintingsBadge(all: RecordAllocation[], exclude?: RecordAllocation
     const label = `${r.record.setCode?.toUpperCase()}${r.record.finish === "nonfoil" ? "" : " ✦"}`;
     sets.set(label, (sets.get(label) ?? 0) + r.free);
   }
-  b.title = free ? `Free copies: ${[...sets].map(([s, n]) => `${s} ×${n}`).join(", ")}` : `You own ${owned} in other printings, all in built decks`;
+  b.title = free
+    ? `Free copies: ${[...sets].map(([s, n]) => `${s} ×${n}`).join(", ")}`
+    : `You own ${owned} in other printings, all in built decks`;
   return b;
 }
 

@@ -1,23 +1,33 @@
 /** Content script entry (isolated world). Routes by URL, Archidekt is a Next.js SPA so we watch for navigation. */
+import { allocate } from "../allocation";
+import { buildOwnedIndex } from "../search-transform";
+import { showAddedToasts } from "./added-toast";
 import { AuthError } from "./api";
 import { applyBadges, applyPickerBadges, clearBadges, collectionUserFromUrl, prepareBadges } from "./collection-badges";
 import { renderCollectionView, toggleCollectionView } from "./collection-view";
-import { applySearchBadges, clearSearchBadges } from "./search-badges";
 import { deckIdFromUrl, renderDeckPanel } from "./deck-panel";
+import { applySearchBadges, clearSearchBadges } from "./search-badges";
 import { currentSettings, loadSettings, onSettingsChanged, setCurrentSettings } from "./settings";
-import { loadCache, sync, type Cache } from "./store";
+import { decksForAllocation, invalidateDeck, loadCache, sync, type Cache } from "./store";
 import { el, shadowHost } from "./ui";
-import { showAddedToasts } from "./added-toast";
-import { allocate } from "../allocation";
-import { buildOwnedIndex } from "../search-transform";
-import { decksForAllocation, invalidateDeck } from "./store";
+
+let cache: Cache = { decks: {} };
+let status = "";
+let syncing: Promise<void> | undefined;
 
 /** Hand the page-context hook what it needs to reorder/swap search results. */
 function sendIndexToPage() {
   const s = currentSettings();
-  const result = allocate(cache.collection?.records ?? [], decksForAllocation(cache, s), { ignoreBasicLands: s.ignoreBasicLands });
+  const result = allocate(cache.collection?.records ?? [], decksForAllocation(cache, s), {
+    ignoreBasicLands: s.ignoreBasicLands,
+  });
   window.postMessage(
-    { source: "deck-allocator:ext", type: "index", index: buildOwnedIndex(result), opts: { reorder: s.searchOwnedFirst, swap: s.searchUseFreeCopy } },
+    {
+      source: "deck-allocator:ext",
+      type: "index",
+      index: buildOwnedIndex(result),
+      opts: { reorder: s.searchOwnedFirst, swap: s.searchUseFreeCopy },
+    },
     location.origin,
   );
 }
@@ -29,12 +39,12 @@ window.addEventListener("message", async (e) => {
   if (!cache.decks[deckId]) return; // not one of the user's decks
   await invalidateDeck(deckId);
   await runSync(false);
-  showAddedToasts(cache, deckId, added.map((a) => a.deckRelationId));
+  showAddedToasts(
+    cache,
+    deckId,
+    added.map((a) => a.deckRelationId),
+  );
 });
-
-let cache: Cache = { decks: {} };
-let status = "";
-let syncing: Promise<void> | undefined;
 
 function applyPageBadges() {
   const s = currentSettings();
@@ -49,14 +59,20 @@ function render() {
   const collectionUser = collectionUserFromUrl();
   prepareBadges(cache);
 
-  shadowHost("deck-allocator-deck").querySelectorAll(".fab,.panel").forEach((n) => n.remove());
+  shadowHost("deck-allocator-deck")
+    .querySelectorAll(".fab,.panel")
+    .forEach((n) => n.remove());
   if (deckId && s.deckPanel) renderDeckPanel(cache, deckId, status, () => runSync(false));
 
   const root = shadowHost("deck-allocator-collection");
   root.querySelectorAll(".fab").forEach((n) => n.remove());
   if (collectionUser && String(cache.userId) === collectionUser) {
     const scan = document.documentElement.getAttribute("data-da-scan") ?? "?";
-    const fab = el("button", { class: "fab", title: `Rows matched: ${scan}. Opens the full collection sorted by allocation.` }, status || "Allocation view");
+    const fab = el(
+      "button",
+      { class: "fab", title: `Rows matched: ${scan}. Opens the full collection sorted by allocation.` },
+      status || "Allocation view",
+    );
     fab.onclick = () => toggleCollectionView(cache, () => runSync(true));
     root.append(fab);
     renderCollectionView(cache, () => runSync(true));
@@ -118,7 +134,12 @@ async function main() {
       pending = false;
       applyPageBadges();
     }, 300);
-  }).observe(document.documentElement, { childList: true, subtree: true, attributes: true, attributeFilter: ["data-da-record-id"] });
+  }).observe(document.documentElement, {
+    childList: true,
+    subtree: true,
+    attributes: true,
+    attributeFilter: ["data-da-record-id"],
+  });
 }
 
 main();

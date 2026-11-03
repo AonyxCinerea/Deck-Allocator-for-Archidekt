@@ -1,5 +1,13 @@
 /** Floating panel on /decks/{id}: status of each card's physical copy, with one-click switches to free copies. */
-import { allocate, holdersOf, planDeckFix, type Deck, type PlannedChange, type RecordAllocation, type SlotResult } from "../allocation";
+import {
+  allocate,
+  holdersOf,
+  planDeckFix,
+  type Deck,
+  type PlannedChange,
+  type RecordAllocation,
+  type SlotResult,
+} from "../allocation";
 import { applyChanges } from "./actions";
 import { decksForAllocation, type Cache } from "./store";
 import { currentSettings } from "./settings";
@@ -15,13 +23,18 @@ function close() {
   lastRender?.();
 }
 // click anywhere outside our UI (or Escape) closes the panel
-document.addEventListener("click", (e) => {
-  const host = document.getElementById("deck-allocator-deck");
-  if (open && host && !e.composedPath().includes(host)) close();
-}, true);
+document.addEventListener(
+  "click",
+  (e) => {
+    const host = document.getElementById("deck-allocator-deck");
+    if (open && host && !e.composedPath().includes(host)) close();
+  },
+  true,
+);
 document.addEventListener("keydown", (e) => e.key === "Escape" && close());
 let preview = false;
 let busy = "";
+let alertRow = "";
 
 export function deckIdFromUrl(): string | undefined {
   return location.pathname.match(/^\/decks\/(\d+)/)?.[1];
@@ -92,7 +105,11 @@ export function renderDeckPanel(cache: Cache, deckId: string, status: string, on
     const wrap = el("span", { class: "detail" });
     for (const a of alts) {
       const qty = Math.min(need, a.free);
-      const b = el("button", { class: "alt", title: `Switch ${qty}× to ${a.record.setCode?.toUpperCase()} #${a.record.printingId} (${a.free} free)` }, `${label(a)} ×${a.free}`);
+      const b = el(
+        "button",
+        { class: "alt", title: `Switch ${qty}× to ${a.record.setCode?.toUpperCase()} #${a.record.printingId} (${a.free} free)` },
+        `${label(a)} ×${a.free}`,
+      );
       b.onclick = () => run(`Switching ${s.slot.name}…`, [{ slot: s.slot, target: a.record, quantity: qty }]);
       wrap.append(b);
     }
@@ -127,7 +144,12 @@ export function renderDeckPanel(cache: Cache, deckId: string, status: string, on
           { class: "preview" },
           el("h3", {}, "Planned switches"),
           ...plan.map((c) =>
-            el("div", { class: "row" }, el("span", { class: "name" }, `${c.quantity}× ${c.slot.name}`), el("span", { class: "detail" }, `→ ${c.target.setCode?.toUpperCase()}${c.target.finish === "nonfoil" ? "" : " ✦"}`)),
+            el(
+              "div",
+              { class: "row" },
+              el("span", { class: "name" }, `${c.quantity}× ${c.slot.name}`),
+              el("span", { class: "detail" }, `→ ${c.target.setCode?.toUpperCase()}${c.target.finish === "nonfoil" ? "" : " ✦"}`),
+            ),
           ),
           el("div", { class: "top", style: "margin-top:8px" }, cancel, apply),
         );
@@ -138,7 +160,12 @@ export function renderDeckPanel(cache: Cache, deckId: string, status: string, on
   const panel = el(
     "div",
     { class: "panel" },
-    el("div", { class: "top" }, el("h2", {}, theory ? "If you built this deck now" : "Physical copies"), el("span", {}, fixAll, refresh, " ", gearButton())),
+    el(
+      "div",
+      { class: "top" },
+      el("h2", {}, theory ? "If you built this deck now" : "Physical copies"),
+      el("span", {}, fixAll, refresh, " ", gearButton()),
+    ),
     el(
       "div",
       { class: "muted" },
@@ -150,12 +177,15 @@ export function renderDeckPanel(cache: Cache, deckId: string, status: string, on
     previewBlock,
     ...section("Conflict — copy used by an older deck", "bad", conflicts, (s) => {
       const holders = holdersOf(result, s.slot.printingId, s.slot.finish).filter((c) => c.deckId !== deckId);
-      return el("span", { class: "detail" }, el("span", { class: "muted" }, `in ${holders.map((h) => h.deckName).join(", ") || "?"} `), altButtons(s));
+      return el(
+        "span",
+        { class: "detail" },
+        el("span", { class: "muted" }, `in ${holders.map((h) => h.deckName).join(", ") || "?"} `),
+        altButtons(s),
+      );
     }),
     ...section("Printing not owned — free copy available", "warn", swappable, altButtons),
     ...section("Not owned / no free copy", "muted", missing, () => el("span")),
   );
   root.append(panel);
 }
-
-let alertRow = "";
