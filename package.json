@@ -1,0 +1,20 @@
+{
+  "name": "deck-allocator-for-archidekt",
+  "version": "0.5.0",
+  "description": "Browser extension for Archidekt: which physical copies are in which deck, and switching decks to free copies.",
+  "scripts": {
+    "build": "node build.mjs",
+    "test": "vitest run",
+    "typecheck": "tsc",
+    "package": "node build.mjs && node scripts/package.mjs",
+    "spike": "esbuild src/spike.ts --bundle --format=iife --target=es2020 --outfile=dist/deck-allocator-spike.js"
+  },
+  "devDependencies": {
+    "@types/chrome": "^0.3.7",
+    "esbuild": "^0.28.2",
+    "typescript": "^7.0.2",
+    "vitest": "^2.1.9"
+  },
+  "private": true,
+  "type": "module"
+}
