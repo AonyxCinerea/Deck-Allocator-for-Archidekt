@@ -21,6 +21,9 @@ describe("classifySearch", () => {
     expect(classifySearch("https://archidekt.com/api/cards/v2/?nameSearch=sol&unique&")).toBe("names");
     expect(classifySearch("/api/cards/v2/?exact&oracleCardIds=20089&orderBy=-editiondate&")).toBe("printings");
     expect(classifySearch("/api/cards/v2/?oracleCardIds=1,2&unique&")).toBe("other");
+    expect(classifySearch("/api/cards/v2/?name=sol+ring&unique&page=1")).toBe("names");
+    expect(classifySearch("/api/cards/v2/?name=sol+ring&page=1")).toBe("printings");
+    expect(classifySearch("/api/cards/inDecks/?cardId=1")).toBe("other");
   });
 });
 

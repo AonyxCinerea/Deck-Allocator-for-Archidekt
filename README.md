@@ -3,7 +3,7 @@
 A browser extension for [Archidekt](https://archidekt.com) that connects your **collection** with your **decks** the way your physical cards are actually sorted: every card in a built deck uses one specific copy from your collection.
 
 - **Deck pages:** a panel shows which cards have their own copy, which conflict with an older deck that already holds that copy, and which point at a printing you don't own while you have a free copy of another one. Click a printing to switch the card to it, or switch the whole deck at once.
-- **Card search:** cards you own come first. On deck pages a search result is swapped to your free non-foil copy before Archidekt shows it, so adding the card adds *your* printing. If a card still gets added in a printing you don't own, a notice offers to switch it to your free copy.
+- **Card search** (quick add, deck Search overlay, site-wide search; one print or all prints): cards and printings you own come first, each with a badge (free / in which deck / "other printings: N free"). On deck pages a search result is swapped to your free non-foil copy before Archidekt shows it, so adding the card adds *your* printing. If a card still gets added in a printing you don't own, a notice offers to switch it to your free copy.
 - **Printing picker:** your printings come first, with a badge showing free copies and which deck holds the rest.
 - **Collection page:** badges per row, plus an *Allocation view* of your whole collection, sortable and filterable by free / partly used / all in decks.
 - **Theorycrafted decks** (Archidekt's deck setting) never use copies; their panel shows "if you built this deck now".

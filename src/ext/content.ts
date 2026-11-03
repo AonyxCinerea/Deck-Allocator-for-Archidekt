@@ -2,6 +2,7 @@
 import { AuthError } from "./api";
 import { applyBadges, applyPickerBadges, clearBadges, collectionUserFromUrl, prepareBadges } from "./collection-badges";
 import { renderCollectionView, toggleCollectionView } from "./collection-view";
+import { applySearchBadges, clearSearchBadges } from "./search-badges";
 import { deckIdFromUrl, renderDeckPanel } from "./deck-panel";
 import { currentSettings, loadSettings, onSettingsChanged, setCurrentSettings } from "./settings";
 import { loadCache, sync, type Cache } from "./store";
@@ -39,6 +40,7 @@ function applyPageBadges() {
   const s = currentSettings();
   if (collectionUserFromUrl()) s.collectionBadges ? applyBadges() : clearBadges("collection");
   if (deckIdFromUrl()) s.pickerBadges ? applyPickerBadges() : clearBadges("picker");
+  s.searchBadges ? applySearchBadges() : clearSearchBadges();
 }
 
 function render() {

@@ -10,6 +10,7 @@ export interface Settings {
   pickerBadges: boolean;
   pickerReorder: boolean;
   searchOwnedFirst: boolean;
+  searchBadges: boolean;
   searchUseFreeCopy: boolean;
   addedToast: boolean;
 }
@@ -23,6 +24,7 @@ export const DEFAULT_SETTINGS: Settings = {
   pickerBadges: true,
   pickerReorder: true,
   searchOwnedFirst: true,
+  searchBadges: true,
   searchUseFreeCopy: true,
   addedToast: true,
 };

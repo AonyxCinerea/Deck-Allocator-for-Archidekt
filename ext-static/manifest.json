@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Deck Allocator for Archidekt",
-  "version": "0.6.0",
+  "version": "0.7.0",
   "description": "Shows which of your physical copies are in which deck, and which are still free.",
   "permissions": [
     "storage",

@@ -41,12 +41,19 @@ export function buildOwnedIndex(result: AllocationResult): OwnedIndex {
 
 export type SearchKind = "names" | "printings" | "other";
 
+/**
+ * Card search endpoints (/api/cards/v2/ and future versions). Quick add, the deck "Search" overlay and the site-wide
+ * card search all use them with different parameters:
+ *  - oracleCardIds + exact  → all printings of one card (printing picker)
+ *  - oracleCardIds          → the deck loading its own cards/tokens: leave alone
+ *  - unique                 → one printing per card ("one print per result", quick add)
+ *  - otherwise              → every printing ("all prints")
+ */
 export function classifySearch(url: string): SearchKind {
   const u = new URL(url, "https://archidekt.com");
-  if (!u.pathname.startsWith("/api/cards/v2")) return "other";
-  if (u.searchParams.has("nameSearch")) return "names";
-  if (u.searchParams.has("exact") && u.searchParams.has("oracleCardIds")) return "printings";
-  return "other";
+  if (!/^\/api\/cards\/v\d+\/?$/.test(u.pathname)) return "other";
+  if (u.searchParams.has("oracleCardIds")) return u.searchParams.has("exact") ? "printings" : "other";
+  return u.searchParams.has("unique") ? "names" : "printings";
 }
 
 export interface TransformOptions {
@@ -58,6 +65,7 @@ export const MARK = "__deckAllocator";
 
 export function transformCardResults(data: any, kind: SearchKind, index: OwnedIndex, opts: TransformOptions): any {
   if (!data || !Array.isArray(data.results) || kind === "other") return data;
+  if (!data.results.every((c: any) => c && c.oracleCard && "edition" in c)) return data; // not card objects
   let results: any[] = data.results;
 
   if (kind === "names" && opts.swap) {

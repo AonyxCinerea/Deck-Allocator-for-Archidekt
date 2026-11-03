@@ -3,12 +3,13 @@ import { allocate, type AllocationResult, type RecordAllocation } from "../alloc
 import { decksForAllocation, type Cache } from "./store";
 import { currentSettings } from "./settings";
 
-const BADGE_CLASS = "deck-allocator-badge";
+export const BADGE_CLASS = "deck-allocator-badge";
 const NAME_SELECTOR = '[class*="textCollectionCard_cardName"]';
 
 let result: AllocationResult | undefined;
 let byRecordId = new Map<string, RecordAllocation[]>(); // record id → all records of the same printing+finish
 let byPrinting = new Map<string, RecordAllocation[]>(); // "set|collectorNumber" → records of that printing (all finishes)
+let byName = new Map<string, RecordAllocation[]>(); // lower-case card name (and front face) → all records of that card
 
 export function collectionUserFromUrl(): string | undefined {
   return location.pathname.match(/^\/collection\/v2\/(\d+)/)?.[1];
@@ -28,7 +29,19 @@ export function prepareBadges(cache: Cache) {
     const k = printingKey(ra.record.setCode, ra.record.collectorNumber);
     if (k) byPrinting.set(k, [...(byPrinting.get(k) ?? []), ra]);
   }
+  byName = new Map();
+  for (const ra of result.records.values()) {
+    const full = ra.record.name.toLowerCase();
+    for (const n of new Set([full, full.split(" // ")[0]])) byName.set(n, [...(byName.get(n) ?? []), ra]);
+  }
 }
+
+export const lookupPrinting = (set?: string, cn?: string) => {
+  const k = printingKey(set, cn);
+  return k ? byPrinting.get(k) : undefined;
+};
+export const lookupName = (name: string) => byName.get(name.trim().toLowerCase().split(" // ")[0]) ?? byName.get(name.trim().toLowerCase());
+export const badgesReady = () => !!result;
 
 const printingKey = (set?: string, cn?: string) => (set && cn ? `${set.toLowerCase()}|${cn.toLowerCase()}` : undefined);
 
@@ -67,7 +80,7 @@ export function applyPickerBadges() {
   }
 }
 
-function badgeFor(group: RecordAllocation[], withFinish = false): HTMLElement {
+export function badgeFor(group: RecordAllocation[], withFinish = false): HTMLElement {
   const owned = group.reduce((n, r) => n + r.record.quantity, 0);
   const free = group.reduce((n, r) => n + Math.max(r.free, 0), 0);
   const claims = new Map<string, number>();
