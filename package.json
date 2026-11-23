@@ -15,13 +15,13 @@
     "release-notes": "node scripts/release-notes.mjs"
   },
   "devDependencies": {
-    "@playwright/test": "^1.65.0",
+    "@playwright/test": "^1.65.1",
     "@types/chrome": "^0.3.7",
     "@types/node": "^26.6.6",
     "esbuild": "^0.28.2",
-    "prettier": "^3.9.10",
+    "prettier": "^3.10.1",
     "typescript": "^7.0.2",
-    "vitest": "^5.1.0"
+    "vitest": "^5.1.1"
   },
   "private": true,
   "type": "module"
